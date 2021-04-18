@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+<title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE">ATT
+	Group</title>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="referrer" content="origin-when-cross-origin">
+<base href="/" />
+</head>
+
+<body>
+	<div>
+		<div class="wrapper">
+			<div id="formContent">
+				<!-- Tabs Titles -->
+
+				<!-- Icon -->
+				<div>
+					<img th:src="@{/image/registration.png}" width="200" height="200" />
+				</div>
+
+				<!-- Login Form -->
+				<div>
+				    <input type="text" id="email" name="email"
+						placeholder="email" th:value="${email}" />
+				</div>
+				<div>
+				   <input type="text" id="username" name="username"
+						placeholder="username" th:value="${userId}" /> 
+				</div>
+				<div>
+				    <input
+						type="password" id="password" name="password"
+						placeholder="password" th:value="${password}" />
+				</div>
+				<input type="button" value="Submit"
+				    class='btn btn-secondary' id="submitBtn">
+				</div>
+				<div id="linkBox">
+				    <a 
+			          href="http://localhost:9093/attgroup/login"
+			          rel="noopener noreferrer"
+			        >or Go to Login page
+			        </a>
+				</div>
+				<div id="notifyBox"></div>
+			</div>
+			
+
+		</div>
+		<!-- End of div formContent -->
+	</div>
+	</div>
+	<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
+	<script>
+    $(function() {
+    	console.log("Calling authenticate...");
+        $("#submitBtn").click(function () {
+            var username=$("#username").val();
+            var password=$("#password").val();
+            var email=$("#email").val();
+            $.ajax({
+                type: "POST",
+                url: "http://localhost:9093/attgroup/api/auth/register",
+                contentType: "application/json;charset=UTF-8",
+                data:JSON.stringify({"username":username ,"password" : password, "email" : email}),
+                dataType: "json",
+                async: false,
+                error: function (request) {
+                    console.log("Connection error");
+                    $('#notifyBox').html('<div class="error">Login failed, please try again.</div>');
+                },
+                success: function (data) {
+                    //save token
+                    console.log("jwt: "+data.token);
+                    if(data.token == null || data.token == ""){
+                    	$('#linkBox').toggle(true);
+                    }
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

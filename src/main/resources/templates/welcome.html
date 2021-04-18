@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org" 
+    xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+   >
+<head>
+<title>Welcome</title>
+
+</head>
+
+<body onload="myOnload();">
+    <div >
+                Welcome!!!
+    </div>
+
+<script src="https://cdn.bootcss.com/jquery/1.11.3/jquery.js"></script>
+<script>
+function myOnload(){
+    var jwtToken = localStorage.getItem('jwtToken');
+    console.log("localStorage token: "+jwtToken);
+	$.ajax({
+        type: "GET",
+        url: "http://localhost:9093/attgroup/user",
+        beforeSend: function (xhr) {
+            xhr.setRequestHeader('Authorization', 'Bearer '+jwtToken);
+        },
+        dataType: "html",
+        async: true,
+        cache: false,
+        timeout: 600000,
+        success: function (data) {
+            console.log("Home page api success");
+            localStorage.setItem('jwtToken', data.token);
+            $('body').html(data);
+            
+           	let stateObj = {
+			    Athorization: "Bearer "+data.token,
+			}
+
+            history.replaceState(stateObj, '', '/attgroup/welcome');
+        },
+        error: function (e) {
+        	console.log("Home page api failed");
+        	console.log("error: "+ e.responseText);
+        }
+    });
+};
+</script>
+</body>
+</html>
